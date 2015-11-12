@@ -67,7 +67,7 @@ public:
 class HectorMappingRos
 {
 public:
-  HectorMappingRos();
+  HectorMappingRos(); 
   ~HectorMappingRos();
 
 
