@@ -36,6 +36,8 @@
 #include "../util/DrawInterface.h"
 #include "../util/HectorDebugInfoInterface.h"
 
+#include <fstream>
+
 namespace hectorslam{
 
 template<typename ConcreteOccGridMapUtil>
@@ -53,6 +55,11 @@ public:
 
   Eigen::Vector3f matchData(const Eigen::Vector3f& beginEstimateWorld, ConcreteOccGridMapUtil& gridMapUtil, const DataContainer& dataContainer, Eigen::Matrix3f& covMatrix, int maxIterations)
   {
+    // do logging
+    std::ofstream ofs;
+    ofs.open("test.txt", std::ofstream::out | std::ofstream::app );
+    dataContainer.serialize(ofs);
+
     if (drawInterface){
       drawInterface->setScale(0.05f);
       drawInterface->setColor(0.0f,1.0f, 0.0f);

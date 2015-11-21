@@ -70,7 +70,8 @@ public:
 
   void update(const DataContainer& dataContainer, const Eigen::Vector3f& poseHintWorld, bool map_without_matching = false)
   {
-    //std::cout << "\nph:\n" << poseHintWorld << "\n";
+    // RCL: x, y, theta for pose
+    std::cout << "\nph:\n" << poseHintWorld << "\n";
 
     Eigen::Vector3f newPoseEstimateWorld;
 
@@ -82,7 +83,7 @@ public:
 
     lastScanMatchPose = newPoseEstimateWorld;
 
-    //std::cout << "\nt1:\n" << newPoseEstimateWorld << "\n";
+    std::cout << "\nt1:\n" << newPoseEstimateWorld << "\n";
 
     //std::cout << "\n1";
     //std::cout << "\n" << lastScanMatchPose << "\n";

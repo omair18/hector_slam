@@ -161,6 +161,7 @@ HectorMappingRos::HectorMappingRos()
       tmp.dynamicMapServiceServer_ = node_.advertiseService("dynamic_map", &HectorMappingRos::mapCallback, this);
     }
 
+    // RCL: sets parameters for .map_.map.info to be published
     setServiceGetMapData(tmp.map_, slamProcessor->getGridMap(i));
 
     if ( i== 0){
