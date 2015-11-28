@@ -57,36 +57,34 @@ public:
   Eigen::Vector3f matchData(const Eigen::Vector3f& beginEstimateWorld, ConcreteOccGridMapUtil& gridMapUtil, const DataContainer& dataContainer, Eigen::Matrix3f& covMatrix, int maxIterations)
   {
 
-    // // create new hash to make the call of matchData unique
-    // const int hashsize = 16;
-    // char hash [hashsize];
-    // util::gen_random(hash, hashsize);
+    // RCL: Adding lines 61 - 75 errors with exit code -11, SIGSEGV, signaling an invalide memory reference, or segmentation fault
+    // create new hash to make the call of matchData unique
+    char hash [16];
+    util::gen_random(hash, 16);
 
-    // // dataContainer filename
-    // char fn [100];
-    // strcpy(fn, "ScanMatcherLogs/");
-    // strcat(fn, hash);
-    // strcat(fn, "_dataContainer.csv");
+    // dataContainer filename
+    char fn [100];
+    strcpy(fn, "ScanMatcherLogs/");
+    strcat(fn, hash);
+    strcat(fn, "_dataContainer.csv");
 
-    // // io filename
-    // char fn1 [100];
-    // strcpy(fn1, "ScanMatcherLogs/");
-    // strcat(fn1, hash);
-    // strcat(fn1, "_io.csv");
-
-    // std::cout << fn << std::endl;
+    // io filename
+    char fn1 [100];
+    strcpy(fn1, "ScanMatcherLogs/");
+    strcat(fn1, hash);
+    strcat(fn1, "_io.csv");
 
     // log input dataContainer 
     std::ofstream ofs;
-    // ofs.open(fn, std::ofstream::out | std::ofstream::app );
-    ofs.open("ScanMatcherLogs/test_dataContainer.csv", std::ofstream::out | std::ofstream::app );
+    ofs.open(fn, std::ofstream::out | std::ofstream::app );
+    // ofs.open("ScanMatcherLogs/test_dataContainer.csv", std::ofstream::out | std::ofstream::app );
     dataContainer.serialize(ofs);
     ofs.close();
 
     // log other input data
     std::ofstream ofs1;
-    // ofs1.open(fn1, std::ofstream::out | std::ofstream::app );
-    ofs1.open("ScanMatcherLogs/test_io.csv", std::ofstream::out | std::ofstream::app );
+    ofs1.open(fn1, std::ofstream::out | std::ofstream::app );
+    // ofs1.open("ScanMatcherLogs/test_io.csv", std::ofstream::out | std::ofstream::app );
     std::string header = "beginEstimateWorld,covMatrix,maxIterations,newEstimateWorld";
     ofs1 << header << std::endl;
     util::serializeVector3f(ofs1, beginEstimateWorld);
