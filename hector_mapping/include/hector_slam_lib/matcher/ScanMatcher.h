@@ -74,14 +74,12 @@ public:
     // log input dataContainer 
     std::ofstream ofs;
     ofs.open(fn, std::ofstream::out | std::ofstream::app );
-    // ofs.open("ScanMatcherLogs/test_dataContainer.csv", std::ofstream::out | std::ofstream::app );
     dataContainer.serialize(ofs);
     ofs.close();
 
     // log other input data
     std::ofstream ofs1;
     ofs1.open(fn1, std::ofstream::out | std::ofstream::app );
-    // ofs1.open("ScanMatcherLogs/test_io.csv", std::ofstream::out | std::ofstream::app );
     std::string header = "beginEstimateWorld,covMatrix,maxIterations,newEstimateWorld";
     ofs1 << header << std::endl;
     util::serializeVector3f(ofs1, beginEstimateWorld);

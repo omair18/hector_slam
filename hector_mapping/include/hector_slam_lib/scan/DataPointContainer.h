@@ -90,11 +90,27 @@ public:
 
   void serialize(std::ofstream& outputFile) const
   {
-    outputFile << origo[0] << "," << origo[1] << std::endl;
-    outputFile << getSize() << std::endl;
+    // start json 
+    outputFile << "{" << std::endl;
+
+    outputFile << "\"origo\": [" << origo[0] << "," << origo[1] << "]," << std::endl;
+    outputFile << "\"size\": " << getSize() << "," << std::endl;
+    
+    // start dataPoints array
+    outputFile << "\"dataPoints\": [" << std::endl;
     for (int i = 0; i < getSize(); i++) {
-      outputFile << dataPoints[i][0] << "," << dataPoints[i][1] << std::endl;
-    }    
+      if (i == getSize() - 1) {
+        // end array element does not have ending comma
+        outputFile << "[" << dataPoints[i][0] << "," << dataPoints[i][1] << "]" << std::endl;
+      } else {
+        outputFile << "[" << dataPoints[i][0] << "," << dataPoints[i][1] << "]," << std::endl;
+      }
+    }
+    // end dataPoints array
+    outputFile << "]" << std::endl;
+
+    // end json
+    outputFile << "}" << std::endl;
   }
 
 protected:
