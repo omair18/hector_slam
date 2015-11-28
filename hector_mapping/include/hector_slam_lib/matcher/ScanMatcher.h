@@ -59,20 +59,17 @@ public:
 
     // RCL: Adding lines 61 - 75 errors with exit code -11, SIGSEGV, signaling an invalide memory reference, or segmentation fault
     // create new hash to make the call of matchData unique
-    char hash [16];
-    util::gen_random(hash, 16);
+    char tmphash [16];
+    util::gen_random(tmphash, 16);
+    std::string hash (tmphash);
 
     // dataContainer filename
-    char fn [100];
-    strcpy(fn, "ScanMatcherLogs/");
-    strcat(fn, hash);
-    strcat(fn, "_dataContainer.csv");
+    std::string tmpfn ="ScanMatcherLogs/" + hash + "_dataContainer.csv";
+    const char *fn = tmpfn.c_str();
 
     // io filename
-    char fn1 [100];
-    strcpy(fn1, "ScanMatcherLogs/");
-    strcat(fn1, hash);
-    strcat(fn1, "_io.csv");
+    std::string tmpfn1 ="ScanMatcherLogs/" + hash + "_io.csv";
+    const char *fn1 = tmpfn1.c_str();
 
     // log input dataContainer 
     std::ofstream ofs;
@@ -225,15 +222,16 @@ public:
 
       covMatrix = H;
 
-      // // log outputs
-      ofs1 << gridMapUtil.getWorldCoordsPose(estimate) << std::endl;
+      // log outputs
+      Eigen::Vector3f newEstimateWorld = gridMapUtil.getWorldCoordsPose(estimate);
+      util::serializeVector3f(ofs1, newEstimateWorld);
       ofs1.close();
 
-      return gridMapUtil.getWorldCoordsPose(estimate);
+      return newEstimateWorld;
     }
 
-    // // log outputs
-    ofs1 << beginEstimateWorld << std::endl;
+    // log outputs
+    util::serializeVector3f(ofs1, beginEstimateWorld);
     ofs1.close();
 
     return beginEstimateWorld;
