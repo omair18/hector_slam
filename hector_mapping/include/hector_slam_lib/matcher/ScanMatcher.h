@@ -64,11 +64,11 @@ public:
     std::string hash (tmphash);
 
     // dataContainer filename
-    std::string tmpfn ="ScanMatcherLogs/" + hash + "_dataContainer.csv";
+    std::string tmpfn ="ScanMatcherLogs/" + hash + "_dataContainer.json";
     const char *fn = tmpfn.c_str();
 
     // io filename
-    std::string tmpfn1 ="ScanMatcherLogs/" + hash + "_io.csv";
+    std::string tmpfn1 ="ScanMatcherLogs/" + hash + "_io.json";
     const char *fn1 = tmpfn1.c_str();
 
     // log input dataContainer 
@@ -80,6 +80,7 @@ public:
     // log other input data
     std::ofstream ofs1;
     ofs1.open(fn1, std::ofstream::out | std::ofstream::app );
+    // begin json
     ofs1 << "{" << std::endl;
     // log beginEstimateWorld
     ofs1 << "\"beginEstimateWorld\" : [" << std::endl;
@@ -111,6 +112,11 @@ public:
     if (dataContainer.getSize() != 0) {
 
       Eigen::Vector3f beginEstimateMap(gridMapUtil.getMapCoordsPose(beginEstimateWorld));
+
+      // log beginEstimateMap
+      ofs1 << "\"beginEstimateMap\" : [" << std::endl;
+      util::serializeVector3f(ofs1, beginEstimateMap);
+      ofs1 << "]," << std::endl;
 
       Eigen::Vector3f estimate(beginEstimateMap);
 
@@ -226,21 +232,35 @@ public:
 
       covMatrix = H;
 
-      // log outputs
+      // log covMatrixOut
+      ofs1 << "\"covMatrixOut\" : [" << std::endl;
+      util::serializeMatrix3f(ofs1, covMatrix);
+      ofs1 << "]," << std::endl;
+
+      // log newEstimateMap
+      ofs1 << "\"newEstimateMap\" : [" << std::endl;
+      util::serializeVector3f(ofs1, estimate);
+      ofs1 << "]," << std::endl;
+
+      // log last key, newEstimateWorld
       Eigen::Vector3f newEstimateWorld = gridMapUtil.getWorldCoordsPose(estimate);
       ofs1 << "\"newEstimateWorld\" : [" << std::endl;
       util::serializeVector3f(ofs1, newEstimateWorld);
       ofs1 << "]" << std::endl;
+
+      // close json
       ofs1 << "}" << std::endl;
       ofs1.close();
 
       return newEstimateWorld;
     }
 
-    // log outputs
+    // log newEstimateWorld (unchanged)
     ofs1 << "\"newEstimateWorld\" : [" << std::endl;
     util::serializeVector3f(ofs1, beginEstimateWorld);
     ofs1 << "]" << std::endl;
+
+    // close json
     ofs1 << "}" << std::endl;
     ofs1.close();
 
