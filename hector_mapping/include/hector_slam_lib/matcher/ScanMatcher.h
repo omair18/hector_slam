@@ -80,12 +80,18 @@ public:
     // log other input data
     std::ofstream ofs1;
     ofs1.open(fn1, std::ofstream::out | std::ofstream::app );
-    std::string header = "beginEstimateWorld,covMatrix,maxIterations,newEstimateWorld";
-    ofs1 << header << std::endl;
+    ofs1 << "{" << std::endl;
+    // log beginEstimateWorld
+    ofs1 << "\"beginEstimateWorld\" : [" << std::endl;
     util::serializeVector3f(ofs1, beginEstimateWorld);
+    ofs1 << "]," << std::endl;
+    // log covMatrixIn
+    ofs1 << "\"covMatrixIn\" : [" << std::endl;
     util::serializeMatrix3f(ofs1, covMatrix);
-    ofs1 << maxIterations << std::endl;
-
+    ofs1 << "]," << std::endl;
+    // log maxIterations
+    ofs1 << "\"maxIterations\" : " << maxIterations << "," << std::endl;
+  
     std::cout << beginEstimateWorld[0] << ",";
     std::cout << beginEstimateWorld[1] << ",";
     std::cout << beginEstimateWorld[2] << std::endl;
@@ -222,14 +228,20 @@ public:
 
       // log outputs
       Eigen::Vector3f newEstimateWorld = gridMapUtil.getWorldCoordsPose(estimate);
+      ofs1 << "\"newEstimateWorld\" : [" << std::endl;
       util::serializeVector3f(ofs1, newEstimateWorld);
+      ofs1 << "]" << std::endl;
+      ofs1 << "}" << std::endl;
       ofs1.close();
 
       return newEstimateWorld;
     }
 
     // log outputs
+    ofs1 << "\"newEstimateWorld\" : [" << std::endl;
     util::serializeVector3f(ofs1, beginEstimateWorld);
+    ofs1 << "]" << std::endl;
+    ofs1 << "}" << std::endl;
     ofs1.close();
 
     return beginEstimateWorld;
