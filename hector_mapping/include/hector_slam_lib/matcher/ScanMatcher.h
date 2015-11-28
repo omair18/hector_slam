@@ -37,6 +37,7 @@
 #include "../util/HectorDebugInfoInterface.h"
 
 #include <fstream>
+#include <string.h>
 
 namespace hectorslam{
 
@@ -55,10 +56,46 @@ public:
 
   Eigen::Vector3f matchData(const Eigen::Vector3f& beginEstimateWorld, ConcreteOccGridMapUtil& gridMapUtil, const DataContainer& dataContainer, Eigen::Matrix3f& covMatrix, int maxIterations)
   {
-    // do logging
+
+    // // create new hash to make the call of matchData unique
+    // const int hashsize = 16;
+    // char hash [hashsize];
+    // util::gen_random(hash, hashsize);
+
+    // // dataContainer filename
+    // char fn [100];
+    // strcpy(fn, "ScanMatcherLogs/");
+    // strcat(fn, hash);
+    // strcat(fn, "_dataContainer.csv");
+
+    // // io filename
+    // char fn1 [100];
+    // strcpy(fn1, "ScanMatcherLogs/");
+    // strcat(fn1, hash);
+    // strcat(fn1, "_io.csv");
+
+    // std::cout << fn << std::endl;
+
+    // log input dataContainer 
     std::ofstream ofs;
-    ofs.open("test.txt", std::ofstream::out | std::ofstream::app );
+    // ofs.open(fn, std::ofstream::out | std::ofstream::app );
+    ofs.open("ScanMatcherLogs/test_dataContainer.csv", std::ofstream::out | std::ofstream::app );
     dataContainer.serialize(ofs);
+    ofs.close();
+
+    // log other input data
+    std::ofstream ofs1;
+    // ofs1.open(fn1, std::ofstream::out | std::ofstream::app );
+    ofs1.open("ScanMatcherLogs/test_io.csv", std::ofstream::out | std::ofstream::app );
+    std::string header = "beginEstimateWorld,covMatrix,maxIterations,newEstimateWorld";
+    ofs1 << header << std::endl;
+    util::serializeVector3f(ofs1, beginEstimateWorld);
+    util::serializeMatrix3f(ofs1, covMatrix);
+    ofs1 << maxIterations << std::endl;
+
+    std::cout << beginEstimateWorld[0] << ",";
+    std::cout << beginEstimateWorld[1] << ",";
+    std::cout << beginEstimateWorld[2] << std::endl;
 
     if (drawInterface){
       drawInterface->setScale(0.05f);
@@ -190,8 +227,16 @@ public:
 
       covMatrix = H;
 
+      // // log outputs
+      ofs1 << gridMapUtil.getWorldCoordsPose(estimate) << std::endl;
+      ofs1.close();
+
       return gridMapUtil.getWorldCoordsPose(estimate);
     }
+
+    // // log outputs
+    ofs1 << beginEstimateWorld << std::endl;
+    ofs1.close();
 
     return beginEstimateWorld;
   }
