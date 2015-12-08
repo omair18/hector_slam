@@ -90,6 +90,59 @@ static bool poseDifferenceLargerThan(const Eigen::Vector3f& pose1, const Eigen::
   return false;
 }
 
+static void gen_random(char* s, const int len)
+{
+  /* A function that generates a random alphanumeric string or hash
+
+  implementation found at
+  http://stackoverflow.com/questions/440133/how-do-i-create-a-random-alpha-numeric-string-in-c
+  */
+  static const char alphanum[] =
+      "0123456789"
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      "abcdefghijklmnopqrstuvwxyz";
+
+  for (int i = 0; i < len; ++i)
+  {
+      s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
+  }
+
+  s[len] = 0;
+}
+
+static void serializeVector3f(std::ofstream& outputFile, const Eigen::Vector3f& vect)
+{
+  for (int i = 0; i < 3; i++)
+  {
+    if (i == 2)
+    {
+      outputFile << vect[i] << std::endl;
+    }
+    else
+    {
+      outputFile << vect[i] << ",";
+    }
+  }
+}
+
+static void serializeMatrix3f(std::ofstream& outputFile, const Eigen::Matrix3f& mat)
+{
+  for (int i = 0; i < 3; i++)
+  {
+    for (int j = 0; j < 3; j++)
+    {
+      if (i == 2 && j == 2)
+      {
+        outputFile << mat(i, j) << std::endl;
+      }
+      else
+      {
+        outputFile << mat(i, j) << ",";
+      } 
+    }
+  }
+}
+
 }
 
 #endif

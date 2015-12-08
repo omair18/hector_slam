@@ -30,6 +30,7 @@
 #define __DataPointContainer_h_
 
 #include <vector>
+#include <fstream>
 
 namespace hectorslam {
 
@@ -85,6 +86,31 @@ public:
   void setOrigo(const DataPointType& origoIn)
   {
     origo = origoIn;
+  }
+
+  void serialize(std::ofstream& outputFile) const
+  {
+    // start json 
+    outputFile << "{" << std::endl;
+
+    outputFile << "\"origo\": [" << origo[0] << "," << origo[1] << "]," << std::endl;
+    outputFile << "\"size\": " << getSize() << "," << std::endl;
+    
+    // start dataPoints array
+    outputFile << "\"dataPoints\": [" << std::endl;
+    for (int i = 0; i < getSize(); i++) {
+      if (i == getSize() - 1) {
+        // end array element does not have ending comma
+        outputFile << "[" << dataPoints[i][0] << "," << dataPoints[i][1] << "]" << std::endl;
+      } else {
+        outputFile << "[" << dataPoints[i][0] << "," << dataPoints[i][1] << "]," << std::endl;
+      }
+    }
+    // end dataPoints array
+    outputFile << "]" << std::endl;
+
+    // end json
+    outputFile << "}" << std::endl;
   }
 
 protected:

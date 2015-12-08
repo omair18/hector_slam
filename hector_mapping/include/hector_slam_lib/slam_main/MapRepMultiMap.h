@@ -94,11 +94,13 @@ public:
   virtual int getMapLevels() const { return mapContainer.size(); };
   virtual const GridMap& getGridMap(int mapLevel) const { return mapContainer[mapLevel].getGridMap(); };
 
+  // add new mutex
   virtual void addMapMutex(int i, MapLockerInterface* mapMutex)
   {
     mapContainer[i].addMapMutex(mapMutex);
   }
 
+  // get the value of the mutex
   MapLockerInterface* getMapMutex(int i)
   {
     return mapContainer[i].getMapMutex();
@@ -119,8 +121,12 @@ public:
 
     Eigen::Vector3f tmp(beginEstimateWorld);
 
+    /* RCL: Highest Indexes correspond to coarser or lower resolution maps
+      From the paper:
+      "The scan alignment process is started at the coarsest map level, with the resulting estimated pose 
+      getting used as the start estimate for the next level"
+    */
     for (int index = size - 1; index >= 0; --index){
-      //std::cout << " m " << i;
       if (index == 0){
         tmp  = (mapContainer[index].matchData(tmp, dataContainer, covMatrix, 5));
       }else{

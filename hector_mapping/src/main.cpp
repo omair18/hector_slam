@@ -30,13 +30,15 @@
 #include <ros/ros.h>
 
 #include "HectorMappingRos.h"
+#include <iostream>
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "hector_slam");
 
+  // Specifying a type or class name (HectorMappingRos) and instatiating it to the sm variable.  
   HectorMappingRos sm;
-
+  std::cout << "Hello World" << std::endl;
   ros::spin();
 
   return(0);

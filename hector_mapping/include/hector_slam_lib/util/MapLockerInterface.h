@@ -32,6 +32,7 @@
 class MapLockerInterface
 {
 public:
+  // RCL: wouldn't they be 1 and 0?
   virtual void lockMap() = 0;
   virtual void unlockMap() = 0;
 };

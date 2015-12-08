@@ -43,6 +43,8 @@
   typedef btScalar tfScalar;
 #endif
 
+// RCL: the "__init__" method is named as the same as the classname
+// called the constructor in C++ lingo 
 HectorMappingRos::HectorMappingRos()
   : debugInfoProvider(0)
   , hectorDrawings(0)
@@ -106,6 +108,7 @@ HectorMappingRos::HectorMappingRos()
   private_nh_.param("laser_z_max_value", tmp, 1.0);
   p_laser_z_max_value_ = static_cast<float>(tmp);
 
+  
   if (p_pub_drawings)
   {
     ROS_INFO("HectorSM publishing debug drawings");
@@ -135,6 +138,8 @@ HectorMappingRos::HectorMappingRos()
   for (int i = 0; i < mapLevels; ++i)
   {
     mapPubContainer.push_back(MapPublisherContainer());
+
+    // RCL: Mutex for locking the map?
     slamProcessor->addMapMutex(i, new HectorMapMutex());
 
     std::string mapTopicStr(mapTopic_);
@@ -156,6 +161,7 @@ HectorMappingRos::HectorMappingRos()
       tmp.dynamicMapServiceServer_ = node_.advertiseService("dynamic_map", &HectorMappingRos::mapCallback, this);
     }
 
+    // RCL: sets parameters for .map_.map.info to be published
     setServiceGetMapData(tmp.map_, slamProcessor->getGridMap(i));
 
     if ( i== 0){
@@ -209,6 +215,7 @@ HectorMappingRos::HectorMappingRos()
   lastMapPublishTime = ros::Time(0,0);
 }
 
+// the destructor - destroys the instance, frees up memory
 HectorMappingRos::~HectorMappingRos()
 {
   delete slamProcessor;
