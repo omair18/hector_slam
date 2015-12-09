@@ -1,20 +1,34 @@
-def matchData():
+# def matchData():
 
 
 
 
-protected: 
-def estimateTransformationLogLh(): #log likelihood
+# protected: 
+# def estimateTransformationLogLh(): #log likelihood
 
-	- OccGridMapUtil.h -> getCompleteHessianDerivs - need to log
-	- H -> covMatrix - logged
+# 	- OccGridMapUtil.h -> getCompleteHessianDerivs - need to log
+# 	- H -> covMatrix - logged
 	
 
-def updateEstimatedPose():
-	estimate = estimate+change
+# def updateEstimatedPose():
+# 	estimate = estimate+change
 
-def drawScan():
+# def drawScan():
 
-drawInterface
-debugInterface
+# drawInterface
+# debugInterface
+
+class ScanMatcher(object):
+
+	def __init__(self):
+		pass
+
+	def matchData(self):
+		pass
+
+	def estimateTransformationLogLh(self):
+		pass
+
+	def updateEstimatedPose():
+		pass
 
