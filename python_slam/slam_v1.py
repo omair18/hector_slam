@@ -65,7 +65,10 @@ class ScanMatcher(object):
 		"""
 		if dataContainer['size']:
       		# Eigen::Vector3f beginEstimateMap(gridMapUtil.getMapCoordsPose(beginEstimateWorld));
-			estimate = self.io['beginEstimateMap']
+			if gridMapUtil is None:
+				beginEstimateMap = self.io['beginEstimateMap']
+			else:
+				beginEstimateMap = gridMapUtil.getMapCoordsPose(beginEstimateWorld)
 
       		# estimateTransformationLogLh(estimate, gridMapUtil, dataContainer);
 			estimate = self.estimateTransformationLogLh(beginEstimateMap, gridMapUtil, dataContainer)
@@ -76,14 +79,17 @@ class ScanMatcher(object):
 			estimate[2] = Util.normalize_angle(estimate[2])
 
 			covMatrixOut = self.H
-			newEsimateMap = estimate
-			newEstimateWorld = gridMapUtil.getWorldCoordsPose(estimate)
+			newEstimateMap = estimate
+			if gridMapUtil is None:
+				newEstimateWorld = self.io['newEstimateWorld']
+			else:
+				newEstimateWorld = gridMapUtil.getWorldCoordsPose(estimate)
 			return newEstimateWorld, newEstimateMap, covMatrixOut
 		else:
 			return beginEstimateWorld, self.io['beginEstimateMap'], covMatrix
 
-	def estimateTransformationLogLh(self):
-		pass
+	def estimateTransformationLogLh(self, estimate, gridMapUtil, dataContainer):
+		return estimate
 
 	def updateEstimatedPose():
 		pass

@@ -10,7 +10,7 @@ import json
 import os
 import numpy as np
 
-from slam_v1 import Util
+from slam_v1 import Util, ScanMatcher
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -46,3 +46,18 @@ class TestUtil(unittest.TestCase):
 		print "\n", np.column_stack((x1,x2))
 		self.assertTrue(x2.min() >= -np.pi)
 		self.assertTrue(x2.max() >= np.pi)
+
+class TestScanMatcher(unittest.TestCase):
+	def test_matchData(self):
+		scanMatcher = ScanMatcher(io=io, dc=dc)
+		out = scanMatcher.matchData(
+			  beginEstimateWorld=scanMatcher.io['beginEstimateWorld']
+			, gridMapUtil=None
+			, dataContainer=scanMatcher.dc
+			, covMatrix=scanMatcher.io['covMatrixIn']
+			, maxIterations=scanMatcher.io['maxIterations']
+			)
+		newEstimateWorld, newEstimateMap, covMatrixOut = out
+		self.assertEqual(newEstimateWorld, scanMatcher.io['newEstimateWorld'])
+		self.assertEqual(newEstimateMap, scanMatcher.io['newEstimateMap'])
+		self.assertEqual(covMatrixOut, scanMatcher.io['covMatrixOut'])
