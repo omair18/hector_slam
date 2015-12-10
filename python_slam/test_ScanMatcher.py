@@ -26,17 +26,18 @@ dc = json.load(open(dc_path, 'r'))
 
 class TestDataSerialization(unittest.TestCase):
 	def test_io_loaded(self):
-		# not a comprehensive test for parameters, but shows you the gist
-		self.assertTrue('covMatrixIn' in io)
 		self.assertTrue('beginEstimateWorld' in io)
+		self.assertTrue('covMatrixIn' in io)
+		self.assertTrue('maxIterations' in io)
+		self.assertTrue('beginEstimateMap' in io)
+		self.assertTrue('covMatrixOut' in io)
+		self.assertTrue('newEstimateMap' in io)
+		self.assertTrue('newEstimateWorld' in io)
 
 	def test_dataContainer_loaded(self):
 		self.assertTrue('origo' in dc)
 		self.assertTrue('size' in dc)
 		self.assertTrue('dataPoints' in dc)
-
-	def test_shouldFail(self):
-		self.assertTrue('ryan' in dc)
 
 class TestUtil(unittest.TestCase):
 	def test_normalize_angle(self):
