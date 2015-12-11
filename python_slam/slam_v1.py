@@ -1,3 +1,5 @@
+import "ScanMatcher/7DB6utP8WqtGvV0r_io.json" as dataLog
+
 # def matchData():
 
 
@@ -88,8 +90,25 @@ class ScanMatcher(object):
 		else:
 			return beginEstimateWorld, self.io['beginEstimateMap'], covMatrix
 
-	def estimateTransformationLogLh(self, estimate, gridMapUtil, dataContainer):
-		return estimate
+	def estimateTransformationLogLh(self):
+		#gridMapUtil.getCompleteHessianDerivs(estimate, dataPoints, H, dTr);
+		#if ((H(0, 0) != 0.0f) && (H(1, 1) != 0.0f)) {
 
-	def updateEstimatedPose():
-		pass
+		#read from file, get beginEstimateWorld, covMatrixOut
+		estimate = self.io['beginEstimateMap']
+		H = self.io['H']
+
+		if ((H[0,0] != 0.0) and (H[1,1] != 0.0)):
+			if (searchDir[2] > 0.2):
+				searchDir[2] = 0.2
+				print "SearchDir angle change too large"
+			elif (searchDir[2] < -0.2):
+				searchDir[2] = -0.2
+				print "SearchDir angle change too large"
+
+			updateEstimatedPose(estimate, searchDir)
+	      	return True
+      	return False
+
+	def updateEstimatedPose(self, estimate, change):
+		estimate = estimate+change
