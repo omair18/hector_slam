@@ -120,7 +120,7 @@ public:
 
       Eigen::Vector3f estimate(beginEstimateMap);
 
-      estimateTransformationLogLh(ofs1,estimate, gridMapUtil, dataContainer);
+      estimateTransformationLogLh(0, ofs1, estimate, gridMapUtil, dataContainer);
       //bool notConverged = estimateTransformationLogLh(estimate, gridMapUtil, dataContainer);
 
       /*
@@ -143,7 +143,7 @@ public:
       for (int i = 0; i < numIter; ++i) {
         //std::cout << "\nest:\n" << estimate;
 
-        estimateTransformationLogLh(ofs1,estimate, gridMapUtil, dataContainer);
+        estimateTransformationLogLh(i+1, ofs1, estimate, gridMapUtil, dataContainer);
         //notConverged = estimateTransformationLogLh(estimate, gridMapUtil, dataContainer);
 
         if(drawInterface){
@@ -269,13 +269,13 @@ public:
 
 protected:
 
-  bool estimateTransformationLogLh(std::ofstream ofs, Eigen::Vector3f& estimate, ConcreteOccGridMapUtil& gridMapUtil, const DataContainer& dataPoints)
+  bool estimateTransformationLogLh(int iteration, std::ofstream& ofs, Eigen::Vector3f& estimate, ConcreteOccGridMapUtil& gridMapUtil, const DataContainer& dataPoints)
   {
     gridMapUtil.getCompleteHessianDerivs(estimate, dataPoints, H, dTr);
     //std::cout << "\nH\n" << H  << "\n";
     //std::cout << "\ndTr\n" << dTr  << "\n";
 
-    ofs << "\"H\" : [" << std::endl;
+    ofs << "\"H" << iteration << "\" : [" << std::endl;
     util::serializeMatrix3f(ofs, H);
     ofs << "]," << std::endl;
 

@@ -59,6 +59,17 @@ class TestScanMatcher(unittest.TestCase):
 			, maxIterations=scanMatcher.io['maxIterations']
 			)
 		newEstimateWorld, newEstimateMap, covMatrixOut = out
-		self.assertEqual(newEstimateWorld, scanMatcher.io['newEstimateWorld'])
-		self.assertEqual(newEstimateMap, scanMatcher.io['newEstimateMap'])
-		self.assertEqual(covMatrixOut, scanMatcher.io['covMatrixOut'])
+		vector3ify = lambda arr: np.array(arr).reshape((3,))
+		matrix3ify = lambda arr: np.array(arr).reshape((3,3))
+		print "test values"
+		print vector3ify(scanMatcher.io['newEstimateWorld'])
+		print vector3ify(scanMatcher.io['newEstimateMap'])
+		print matrix3ify(scanMatcher.io['covMatrixOut'])
+
+		print "output values"
+		print newEstimateWorld
+		print newEstimateMap
+		print covMatrixOut
+		self.assertTrue(np.array_equal(newEstimateWorld, vector3ify(scanMatcher.io['newEstimateWorld'])))
+		self.assertTrue(np.array_equal(newEstimateMap, vector3ify(scanMatcher.io['newEstimateMap'])))
+		self.assertTrue(np.array_equal(covMatrixOut, matrix3ify(scanMatcher.io['covMatrixOut'])))
