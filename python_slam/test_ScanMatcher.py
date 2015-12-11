@@ -70,6 +70,6 @@ class TestScanMatcher(unittest.TestCase):
 		print newEstimateWorld
 		print newEstimateMap
 		print covMatrixOut
-		self.assertTrue(np.array_equal(newEstimateWorld, vector3ify(scanMatcher.io['newEstimateWorld'])))
-		self.assertTrue(np.array_equal(newEstimateMap, vector3ify(scanMatcher.io['newEstimateMap'])))
-		self.assertTrue(np.array_equal(covMatrixOut, matrix3ify(scanMatcher.io['covMatrixOut'])))
+		self.assertTrue(np.allclose(newEstimateWorld, vector3ify(scanMatcher.io['newEstimateWorld'])))
+		self.assertTrue(np.allclose(newEstimateMap, vector3ify(scanMatcher.io['newEstimateMap'])))
+		self.assertTrue(np.allclose(covMatrixOut, matrix3ify(scanMatcher.io['covMatrixOut'])))
