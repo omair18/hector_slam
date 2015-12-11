@@ -97,7 +97,9 @@ class ScanMatcher(object):
         #read from file, get beginEstimateWorld, covMatrixOut
         if estimate is None:
             estimate = self.io['beginEstimateMap']
-        self.H = np.array(self.io['H%d' % iteration]).reshape((3,3))
+        if gridMapUtil is None:
+            self.H = np.array(self.io['H%d' % iteration]).reshape((3,3))
+            self.dTr = np.array(self.io['dTr%d' % iteration]).reshape((3,1))
 
         searchDir = np.dot(np.linalg.inv(self.H), self.dTr).flatten()
 
