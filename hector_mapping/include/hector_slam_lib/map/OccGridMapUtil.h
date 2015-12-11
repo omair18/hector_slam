@@ -34,6 +34,9 @@
 #include "../scan/DataPointContainer.h"
 #include "../util/UtilFunctions.h"
 
+#include <fstream>
+#include <string.h>
+
 namespace hectorslam {
 
 template<typename ConcreteOccGridMap, typename ConcreteCacheMethod>
@@ -63,6 +66,17 @@ public:
 
   void getCompleteHessianDerivs(const Eigen::Vector3f& pose, const DataContainer& dataPoints, Eigen::Matrix3f& H, Eigen::Vector3f& dTr)
   {
+    // LOGGING CODE
+    char tmphash [16];
+    util::gen_random(tmphash, 16);
+    std::string hash (tmphash);
+    std::string tmpfn ="OccGridMapUtilLogs/" + hash + "_getCompleteHessianDerivs.json";
+    const char *fn = tmpfn.c_str();
+    std::ofstream ofs;
+    ofs.open(fn, std::ofstream::out | std::ofstream::app );
+    // start JSON
+    ofs << "{" << std::endl;
+
     int size = dataPoints.getSize();
 
     Eigen::Affine2f transform(getTransformForState(pose));
@@ -76,6 +90,7 @@ public:
     for (int i = 0; i < size; ++i) {
 
       const Eigen::Vector2f& currPoint (dataPoints.getVecEntry(i));
+
 
       Eigen::Vector3f transformedPointData(interpMapValueWithDerivatives(transform * currPoint));
 

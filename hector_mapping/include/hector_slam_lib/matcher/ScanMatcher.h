@@ -278,6 +278,9 @@ protected:
     ofs << "\"H" << iteration << "\" : [" << std::endl;
     util::serializeMatrix3f(ofs, H);
     ofs << "]," << std::endl;
+    ofs << "\"dTr" << iteration << "\" : [" << std::endl;
+    util::serializeVector3f(ofs, dTr);
+    ofs << "]," << std::endl;
 
     if ((H(0, 0) != 0.0f) && (H(1, 1) != 0.0f)) {
 
