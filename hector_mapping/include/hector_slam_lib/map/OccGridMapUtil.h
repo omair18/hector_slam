@@ -39,6 +39,8 @@
 
 namespace hectorslam {
 
+
+
 template<typename ConcreteOccGridMap, typename ConcreteCacheMethod>
 class OccGridMapUtil
 {
@@ -64,17 +66,24 @@ public:
 
   inline Eigen::Vector2f getWorldCoordsPoint(const Eigen::Vector2f& mapPoint) const { return concreteGridMap->getWorldCoords(mapPoint); };
 
-  void getCompleteHessianDerivs(const Eigen::Vector3f& pose, const DataContainer& dataPoints, Eigen::Matrix3f& H, Eigen::Vector3f& dTr)
+  void getCompleteHessianDerivs(int iteration, const Eigen::Vector3f& pose, const DataContainer& dataPoints, Eigen::Matrix3f& H, Eigen::Vector3f& dTr)
   {
-    // LOGGING CODE
+
+    // RCL: Adding lines 61 - 75 errors with exit code -11, SIGSEGV, signaling an invalide memory reference, or segmentation fault
+    // create new hash to make the call of matchData unique
     char tmphash [16];
     util::gen_random(tmphash, 16);
     std::string hash (tmphash);
-    std::string tmpfn ="OccGridMapUtilLogs/" + hash + "_getCompleteHessianDerivs.json";
+
+    // dataContainer filename
+    std::string tmpfn ="OccGridMapUtilLogs/" + hash + "_getHessianDerivs.json";
     const char *fn = tmpfn.c_str();
+
+    // log input data
     std::ofstream ofs;
     ofs.open(fn, std::ofstream::out | std::ofstream::app );
-    // start JSON
+    
+    // begin json
     ofs << "{" << std::endl;
 
     int size = dataPoints.getSize();
@@ -91,7 +100,8 @@ public:
 
       const Eigen::Vector2f& currPoint (dataPoints.getVecEntry(i));
 
-
+      //Eigen::Vector3f temp = interpMapValueWithDerivatives(iteration, ofs, transform * currPoint);
+      //Eigen::Vector3f transformedPointData(temp);
       Eigen::Vector3f transformedPointData(interpMapValueWithDerivatives(transform * currPoint));
 
       float funVal = 1.0f - transformedPointData[0];
@@ -116,9 +126,19 @@ public:
     H(2, 0) = H(0, 2);
     H(2, 1) = H(1, 2);
 
+    //log H
+    ofs << "\"H" << iteration << "\" : [" << std::endl;
+    util::serializeMatrix3f(ofs, H);
+    ofs << "]," << std::endl;
+
+    //log dTr
+    ofs << "\"dTr" << iteration << "\" : [" << std::endl;
+    util::serializeVector3f(ofs, dTr);
+    ofs << "]," << std::endl;
+
   }
 
-  Eigen::Matrix3f getCovarianceForPose(const Eigen::Vector3f& mapPose, const DataContainer& dataPoints)
+  Eigen::Matrix3f getCovarianceForPose(int iteration, std::ofstream& ofs, const Eigen::Vector3f& mapPose, const DataContainer& dataPoints)
   {
 
     float deltaTransX = 1.5f;
@@ -168,13 +188,18 @@ public:
       covMatrixMap += (likelihoods[i] * invLhNormalizer) * (sigPointMinusMean * (sigPointMinusMean.transpose()));
     }
 
+    //log covMatrixMap
+    ofs << "\"covMatrixMap" << iteration << "\" : [" << std::endl;
+    util::serializeMatrix3f(ofs, covMatrixMap);
+    ofs << "]," << std::endl;
+
     return covMatrixMap;
 
     //covMatrix.cwise() * invLhNormalizer;
     //transform = getTransformForState(Eigen::Vector3f(x-deltaTrans, y, ang);
   }
 
-  Eigen::Matrix3f getCovMatrixWorldCoords(const Eigen::Matrix3f& covMatMap)
+  Eigen::Matrix3f getCovMatrixWorldCoords(int iteration, std::ofstream& ofs, const Eigen::Matrix3f& covMatMap)
   {
 
     //std::cout << "\nCovMap:\n" << covMatMap;
@@ -198,12 +223,26 @@ public:
 
     covMatWorld(2, 2) = covMatMap(2, 2);
 
+    //log covMatWorld
+    ofs << "\"covMatWorld" << iteration << "\" : [" << std::endl;
+    util::serializeMatrix3f(ofs, covMatWorld);
+    ofs << "]," << std::endl;
+
     return covMatWorld;
   }
 
-  float getLikelihoodForState(const Eigen::Vector3f& state, const DataContainer& dataPoints)
+  float getLikelihoodForState(int iteration, std::ofstream& ofs, const Eigen::Vector3f& state, const DataContainer& dataPoints)
   {
     float resid = getResidualForState(state, dataPoints);
+
+    //log likelihood for state
+    ofs << "\"likelihoodForState" << iteration << "\" : [" << std::endl;
+    util::serializeMatrix3f(ofs, getLikelihoodForResidual(resid, dataPoints.getSize()));
+    ofs << "]," << std::endl;
+
+    // close json
+    ofs << "}" << std::endl;
+    ofs.close();
 
     return getLikelihoodForResidual(resid, dataPoints.getSize());
   }
@@ -299,6 +338,7 @@ public:
 
   }
 
+  //Eigen::Vector3f interpMapValueWithDerivatives(int iteration, std::ofstream& ofs, Eigen::Vector2f& coords) {
   Eigen::Vector3f interpMapValueWithDerivatives(const Eigen::Vector2f& coords)
   {
     //check if coords are within map limits.
@@ -353,12 +393,25 @@ public:
     float xFacInv = (1.0f - factors[0]);
     float yFacInv = (1.0f - factors[1]);
 
-    return Eigen::Vector3f(
+    Eigen::Vector3f retVal = Eigen::Vector3f(
       ((intensities[0] * xFacInv + intensities[1] * factors[0]) * (yFacInv)) +
       ((intensities[2] * xFacInv + intensities[3] * factors[0]) * (factors[1])),
       -((dx1 * xFacInv) + (dx2 * factors[0])),
       -((dy1 * yFacInv) + (dy2 * factors[1]))
     );
+
+    //log likelihood for state
+    /*ofs << "\"mapValWithDerivs" << iteration << "\" : [" << std::endl;
+    util::serializeMatrix3f(ofs, test);
+    ofs << "]," << std::endl;*/
+
+    /*return Eigen::Vector3f(
+      ((intensities[0] * xFacInv + intensities[1] * factors[0]) * (yFacInv)) +
+      ((intensities[2] * xFacInv + intensities[3] * factors[0]) * (factors[1])),
+      -((dx1 * xFacInv) + (dx2 * factors[0])),
+      -((dy1 * yFacInv) + (dy2 * factors[1]))
+    );*/
+    return retVal;
   }
 
   Eigen::Affine2f getTransformForState(const Eigen::Vector3f& transVector) const
