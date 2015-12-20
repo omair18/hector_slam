@@ -41,12 +41,12 @@ class TestDataSerialization(unittest.TestCase):
 
 class TestUtil(unittest.TestCase):
 	def test_normalize_angle(self):
-		x1 = np.linspace(-2*np.pi, 2*np.pi, 25)
+		x1 = np.linspace(-1.5*np.pi, 1.5*np.pi, 8)
 		f = np.vectorize(Util.normalize_angle)
 		x2 = f(x1)
 		print "\n", np.column_stack((x1,x2))
 		self.assertTrue(x2.min() >= -np.pi)
-		self.assertTrue(x2.max() >= np.pi)
+		self.assertTrue(x2.max() <= np.pi)
 
 class TestScanMatcher(unittest.TestCase):
 	def test_matchData(self):
